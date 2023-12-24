@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700">
+<title>Bleeper.ai</title>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="static/style.css">
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+<script>
+function changeText(button) {button.textContent = 'Wait...';}
+</script>
+</head>
+<body>
+    <div class="signup-form" style="margin-top: 50px;">
+        <h2 align="center">Bleeper AI</h2>
+
+        <div class="pt-3 pb-3" id="upload">
+        <hr />
+        <h4 class="pb-3">Step 1: Upload or record your audio.</h4>
+        <form method="post" enctype="multipart/form-data" class="form-inline" id="form1">
+        {% if msg %}
+        <div class="alert alert-danger w-100" role="alert">{{ msg }}</div>
+        {% endif %}
+        <div class="w-100">
+            <input type="file" class="form-control w-100" name="file" id="file_input" placeholder="select a file" required>
+            {% include 'recorder.html' %}
+            <select class="form-select p-2 mb-1 w-100" name="lang" required>
+              <option value="">Select language</option>
+              <option value="uk" selected>Ukrainian</option>
+              <option value="en">English</option>
+            </select>
+            <button type="submit" class="btn btn-primary p-2 mb-1 w-100" onclick="changeText(this);">Next ↓</button>
+        </div>
+        </form>
+        </div>
+
+        <div class="pt-3 pb-3">
+        <hr />
+        <h4 class="pb-3">Step 2: Choose words or intervals.</h4>
+            <h5>Select sensitivity to explicit language and click Add words or simply click on the all words you want to censor.</h5>
+            {%if name and lang and phrases%}
+        <form method="post" action="/" name="form3" enctype="multipart/form-data" class="form-inline">
+        <div class="w-100 mb-2">
+            <script>
+            function toggleText(start, end, text){
+                let element = document.form3.getElementsByTagName('textarea')[0];
+                let str = start+'-'+end+'('+text+');';
+                if (element.value.includes(str)) {
+                    element.value = element.value.replace(str, '')
+                } else {
+                    element.value += str;
+                }
+            }
+            function filterLevel(){
+                let value = document.getElementById("range").value;
+                for (el of document.getElementById("words").children) {
+                    if (el.value > 1-value) {el.style.color="red"} else {el.style.color="#212529"}
+                }
+            }
+            function clearText(){
+                document.getElementById("text").value = "";
+                for (el of document.getElementById("words").children) {
+                    el.classList.remove("active");
+                }
+            }
+            function addWords(){
+                clearText();
+                let value = document.getElementById("range").value;
+                for (el of document.getElementById("words").children) {
+                    if (el.value > 1-value) {el.click()}
+                }
+            }
+            </script>
+            <input type="hidden" name="name" value={{name}} />
+            <input type="hidden" name="lang" value={{lang}} />
+
+            <input type="hidden" name="phrases_string" value={{phrases_string}} />
+
+            <label class="form-label p-1" id="">Sensitivity</label>
+            <input type="range" class="form-range w-100" id="range" min="0" max="1" value="0.5" step="0.05"
+                   onchange="filterLevel()" oninput="filterLevel()">
+            <button type="button" class="btn w-100 mb-2" onclick="addWords();">Add words</button>
+            <div class="btn-group-toggle" data-toggle="buttons" id="words">
+
+            {%for i in phrases%}
+                <button type="button" class="btn btn-light p-1"
+                        value={{i[-1]}} onclick="toggleText('{{i[0]}}', '{{i[1]}}', '{{i[2]}}');">{{i[2]}}</button>
+            {%endfor%}
+            </div>
+            <script>filterLevel();</script>
+            <textarea class="w-100" name="timestamps_string" rows=3 id="text" required></textarea>
+            <button type="button" class="btn w-100 mt-1 mb-1"
+                    onclick="clearText();">Clear</button>
+            <select class="form-select p-2 mb-1 w-100" name="effect" required>
+              <option value="">Select audio effect</option>
+              <option value="bleep" selected>Bleep</option>
+              <option value="silence">Silence</option>
+            </select>
+            <button type="submit" class="btn btn-primary w-100" onclick="changeText(this);">Next ↓</button>
+        </div>
+        </form>
+            {%endif%}
+        </div>
+
+        <div class="pt-3" style="padding-bottom: 80%">
+        <hr />
+        <h4 class="pb-3">Step 3: Download edited file.</h4>
+            {%if name and timestamps%}
+        <form enctype="multipart/form-data" class="form-inline">
+        <div class="w-100">
+            <audio controls src="uploads/{{name}}-bleeper_ai.wav" style="width:100%">
+                Your browser does not support the audio element.
+            </audio>
+                <br />
+            <a href="uploads/{{name}}-bleeper_ai.wav" download>
+                <input name="submit" class="btn btn-success btn-lg btn-block" value="Download audio">
+            </a>
+        </div>
+        </form>
+            {%endif%}
+        </div>
+
+
+    </div>
+</body>
+</html>
+

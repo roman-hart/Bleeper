@@ -1,0 +1,154 @@
+<style>
+@media (min-width: 0px) {
+    .start-recording-button {
+        display: block;
+        text-align: center;
+        font-size: 30px;
+        cursor: pointer;
+    }
+    .recording-contorl-buttons-container {
+        /*targeting Chrome & Safari*/
+        display: -webkit-flex;
+        /*targeting IE10*/
+        display: -ms-flex;
+        display: flex;
+        justify-content: space-evenly;
+    }
+    .cancel-recording-button,
+    .stop-recording-button {
+        font-size: 50px;
+        cursor: pointer;
+    }
+    .cancel-recording-button:hover {
+        color: rgb(206, 4, 4);
+        opacity: 0.7;
+    }
+    .stop-recording-button:hover {
+        color: #27a527;
+        opacity: 0.7;
+    }
+    .recording-elapsed-time {
+        /*targeting Chrome & Safari*/
+        display: -webkit-flex;
+        /*targeting IE10*/
+        display: -ms-flex;
+        display: flex;
+    }
+    .elapsed-time {
+        font-size: 42px;
+    }
+    .recording-contorl-buttons-container.hide {
+        display: none;
+    }
+    .overlay {
+        position: absolute;
+        top: 0;
+        background-color: rgba(82, 76, 76, 0.35);
+        /*targeting Chrome & Safari*/
+        display: -webkit-flex;
+        /*targeting IE10*/
+        display: -ms-flex;
+        display: flex;
+    }
+    .overlay.hide {
+        display: none;
+    }
+    .browser-not-supporting-audio-recording-box {
+        /*targeting Chrome & Safari*/
+        display: -webkit-flex;
+        /*targeting IE10*/
+        display: -ms-flex;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        /*horizontal centering*/
+        align-items: center;
+        width: 317px;
+        height: 119px;
+        background-color: white;
+        border-radius: 10px;
+        padding: 15px;
+        font-size: 16px;
+    }
+    .close-browser-not-supported-box {
+        cursor: pointer;
+        background-color: #abc1c05c;
+        border-radius: 10px;
+        font-size: 16px;
+        border: none;
+    }
+    .close-browser-not-supported-box:hover {
+        background-color: #92a5a45c;
+    }
+    .close-browser-not-supported-box:focus {
+        outline: none;
+        border: none;
+    }
+    .audio-element.hide {
+        display: none;
+    }
+    .audio-playing-container {
+        height: 20px;
+    }
+    .audio-playing {
+        font-size: 20px;
+    }
+    .audio-playing.hide {
+        display: none;
+    }
+    .audio-playing span {
+        /*transitions with Firefox, IE and Opera Support browser support*/
+        animation-name: blinking-dot;
+        -webkit-animation-name: blinking-dot;
+        -moz-animation-name: blinking-dot;
+        -o-animation-name: blinking-dot;
+        animation-duration: 2s;
+        -webkit-animation-duration: 2s;
+        -moz-animation-duration: 2s;
+        -o-animation-duration: 2s;
+        animation-iteration-count: infinite;
+        -webkit-animation-iteration-count: infinite;
+        -moz-animation-iteration-count: infinite;
+        -o-animation-iteration-count: infinite;
+    }
+    .audio-playing span:nth-child(2) {
+        animation-delay: .4s;
+        -webkit-animation-delay: .4s;
+        -moz-animation-delay: .4s;
+        -o-animation-delay: .4s;
+    }
+    .audio-playing span:nth-child(3) {
+        animation-delay: .8s;
+        -webkit-animation-delay: .8s;
+        -moz-animation-delay: .8s;
+        -o-animation-delay: .8s;
+    }
+}
+@media (min-width: 768px) {}
+@media (min-width: 992px) {}
+@media (min-width: 1024px) {}
+@media (min-width: 1200px) {}
+</style>
+<div class="audio-recording-container w-100 mt-2 mb-4">
+    <i class="start-recording-button fa fa-microphone mb-2" aria-hidden="true"> RECORD</i>
+    <div class="recording-contorl-buttons-container hide">
+        <i class="cancel-recording-button fa fa-times-circle-o" aria-hidden="true"></i>
+        <div class="recording-elapsed-time">
+            <p class="elapsed-time"></p>
+        </div>
+        <i class="stop-recording-button fa fa-stop-circle-o" aria-hidden="true"></i>
+    </div>
+    <div class="audio-playing-container">
+        <p class="audio-playing hide">
+            <audio controls class="audio-element w-100"></audio>
+        </p>
+    </div>
+</div>
+<div class="overlay hide">
+    <div class="browser-not-supporting-audio-recording-box">
+        <p>To record audio, use browsers like Chrome and Firefox that support audio recording.</p>
+        <button type="button" class="close-browser-not-supported-box">Ok</button>
+    </div>
+</div>
+
+<script src="static/recorder.js"></script>

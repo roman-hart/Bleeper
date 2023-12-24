@@ -1,0 +1,6 @@
+uploads/*
+test.py
+
+# exception to the rule
+!uploads/.gitkeep
+/recognize_speech_old.py
