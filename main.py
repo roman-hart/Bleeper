@@ -1,12 +1,15 @@
 from flask import Flask, render_template, jsonify, request, send_from_directory
-from edit_audio import edit, convert
+from file_functions import *
 from recognize_speech import get_phrases
-from evaluate_wors import evaluate, re
-import os
+from text_functions import *
 
 
+capacity = 100  # MB
+max_file_size = 16  # MB
 app = Flask(__name__)
 app.config["UPLOAD_DIR"] = "uploads"
+app.config['MAX_CONTENT_LENGTH'] = max_file_size * 1024 * 1024
+words = load_words()
 
 
 @app.route('/uploads/<path:filename>', methods=['GET', 'POST'])
@@ -20,6 +23,7 @@ def main():
         lang = request.values.get('lang')
         if 'file' in request.files:
             file = request.files['file']  # for file in request.files.getlist('file'):
+            manage_capacity(capacity, max_file_size)
             name = file.filename.split('.')[0]
             file.save(os.path.join(app.config['UPLOAD_DIR'], file.filename))
             if not convert(file.filename):
@@ -28,15 +32,15 @@ def main():
             if not phrases:
                 return render_template("index.html", msg='Failed to recognize any word.')
             for ph in phrases:
-                ph[-1] = evaluate(ph[2], lang)
+                ph[-1] = evaluate(ph[2], lang, words)
             print('Phrases:', phrases)
             return render_template("index.html", name=name, lang=lang, phrases=phrases,
                                    phrases_string=';'.join('-'.join(str(p) for p in ph) for ph in phrases))
-        if timestamps := request.values.get('timestamps_string'):
+        if timestamps_string := request.values.get('timestamps_string'):
             effect, name, phrases_string = [request.values.get(i) for i in ['effect', 'name', 'phrases_string']]
             phrases = [ph.split('-') for ph in phrases_string.split(';')]
-            timestamps = re.sub(r'\([^)]*\)', '', timestamps)
-            timestamps = [tuple(float(j) for j in i.split('-')) for i in timestamps.split(';')[:-1]]
+            save_words(timestamps_string)
+            timestamps = get_timestamps(timestamps_string)
             edit(name, timestamps, True if effect == 'silence' else False)
             return render_template("index.html", name=name, timestamps=timestamps,
                                    lang=lang, phrases=phrases)

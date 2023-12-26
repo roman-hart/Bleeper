@@ -1,5 +1,6 @@
 uploads/*
 test.py
+chosen_words.txt
 
 # exception to the rule
 !uploads/.gitkeep

@@ -4,10 +4,12 @@ import os
 import re
 
 
-words = {}
-for filename in os.listdir('words'):
-    with open(f'words/{filename}', 'r') as f:
-        words[filename.split('.')[0]] = [j for i in csv.reader(f) for j in i]
+def load_words():
+    words = {}
+    for filename in os.listdir('words'):
+        with open(f'words/{filename}', 'r') as f:
+            words[filename.split('.')[0]] = [j for i in csv.reader(f) for j in i]
+    return words
 
 
 def _evaluate(new_word, known_word, max_=0.9, min_=0.1):
@@ -27,10 +29,22 @@ def _evaluate(new_word, known_word, max_=0.9, min_=0.1):
     return r  # 1 / (distance + 1)
 
 
-def evaluate(word, lang):
+def evaluate(word, lang, words):
     return max([_evaluate(word, w) for w in words[lang]])
 
 
+def get_timestamps(timestamps_string):
+    timestamps = re.sub(r'\([^)]*\)', '', timestamps_string)
+    return [tuple(float(j) for j in i.split('-')) for i in timestamps.split(';')[:-1]]
+
+
+def save_words(timestamps_string):
+    chosen_words = ''.join(re.findall(r';|[^\W\d]', timestamps_string)).split(';')[:-1]
+    with open('chosen_words.txt', 'a') as f:
+        f.writelines('\n'.join(chosen_words) + '\n')
+
+
 if __name__ == '__main__':
+    words_ = load_words()
     for w in ['один', 'ж', 'жж', 'жжж', 'жжжж', 'т', 'те', 'тес', 'тест', 'тестик', 'тестування']:
-        print(w, evaluate(w, 'uk'))
+        print(w, evaluate(w, 'uk', words_))

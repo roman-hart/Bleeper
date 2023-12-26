@@ -1,5 +1,13 @@
 from pydub import AudioSegment
+from pathlib import Path
 import os
+
+
+def manage_capacity(capacity, max_file_size):
+    available = capacity - sum(f.stat().st_size for f in Path('uploads').glob('**/*') if f.is_file()) // 1000000
+    if available < max_file_size:
+        path_to_oldest = sorted(Path('uploads').iterdir(), key=os.path.getmtime)[0]
+        os.remove(path_to_oldest)
 
 
 def edit(name, timestamps, silence=False, wider=0.15, during_len=None):

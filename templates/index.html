@@ -19,10 +19,10 @@ function changeText(button) {button.textContent = 'Wait...';}
     <div class="signup-form" style="margin-top: 50px;">
         <h2 align="center">Bleeper AI</h2>
 
-        <div class="pt-3 pb-3" id="upload">
+        <div class="pt-3 pb-3" id="step1">
         <hr />
         <h4 class="pb-3">Step 1: Upload or record your audio.</h4>
-        <form method="post" enctype="multipart/form-data" class="form-inline" id="form1">
+        <form method="post" enctype="multipart/form-data" class="form-inline" id="form1" action="#step2">
         {% if msg %}
         <div class="alert alert-danger w-100" role="alert">{{ msg }}</div>
         {% endif %}
@@ -39,12 +39,12 @@ function changeText(button) {button.textContent = 'Wait...';}
         </form>
         </div>
 
-        <div class="pt-3 pb-3">
+        <div class="pt-3 pb-3" id="step2">
         <hr />
         <h4 class="pb-3">Step 2: Choose words or intervals.</h4>
             <h5>Select sensitivity to explicit language and click Add words or simply click on the all words you want to censor.</h5>
             {%if name and lang and phrases%}
-        <form method="post" action="/" name="form3" enctype="multipart/form-data" class="form-inline">
+        <form method="post" name="form3" enctype="multipart/form-data" class="form-inline" action="#step3">
         <div class="w-100 mb-2">
             <script>
             function toggleText(start, end, text){
@@ -107,7 +107,7 @@ function changeText(button) {button.textContent = 'Wait...';}
             {%endif%}
         </div>
 
-        <div class="pt-3" style="padding-bottom: 80%">
+        <div class="pt-3" style="padding-bottom: 80%" id="step3">
         <hr />
         <h4 class="pb-3">Step 3: Download edited file.</h4>
             {%if name and timestamps%}
