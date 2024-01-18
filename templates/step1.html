@@ -1,0 +1,11 @@
+<div class="w-100">
+    <input type="hidden" name="nextstep" value="2" />
+    <input type="file" class="form-control w-100" id="file" name="file" accept=".mp3,.wav,.ogg" placeholder="select a file" required>
+    {% include 'recorder.html' %}
+    <select class="form-select p-2 mb-1 w-100" name="lang" required>
+      <option value="">Select language</option>
+      <option value="uk" selected>Ukrainian</option>
+      <option value="en">English</option>
+    </select>
+    <button type="submit" class="btn btn-primary p-2 mb-1 w-100">Next</button>
+</div>

@@ -5,11 +5,14 @@ import re
 
 
 def load_words():
-    words = {}
+    ws = {}
     for filename in os.listdir('words'):
-        with open(f'words/{filename}', 'r') as f:
-            words[filename.split('.')[0]] = [j for i in csv.reader(f) for j in i]
-    return words
+        with open(f'words/{filename}', 'r', encoding='utf-8') as f:
+            ws[filename.split('.')[0]] = [j for i in csv.reader(f) for j in i]
+    return ws
+
+
+words = load_words()
 
 
 def _evaluate(new_word, known_word, max_=0.9, min_=0.1):
@@ -29,8 +32,8 @@ def _evaluate(new_word, known_word, max_=0.9, min_=0.1):
     return r  # 1 / (distance + 1)
 
 
-def evaluate(word, lang, words):
-    return max([_evaluate(word, w) for w in words[lang]])
+def evaluate(word, lang):
+    return max([_evaluate(word, lang_words) for lang_words in words[lang]])
 
 
 def get_timestamps(timestamps_string):
@@ -45,6 +48,5 @@ def save_words(timestamps_string):
 
 
 if __name__ == '__main__':
-    words_ = load_words()
-    for w in ['один', 'ж', 'жж', 'жжж', 'жжжж', 'т', 'те', 'тес', 'тест', 'тестик', 'тестування']:
-        print(w, evaluate(w, 'uk', words_))
+    for w in ['один', 'ж', 'жж', 'жжж', 'жжжж', 'т', 'те', 'тес', 'тест', 'Тест', 'тестик', 'тестування']:
+        print(w, evaluate(w, 'uk'))

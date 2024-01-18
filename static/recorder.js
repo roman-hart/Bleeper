@@ -72,7 +72,6 @@ function startAudioRecording() {
     console.log("Recording Audio...");
     //If a previous audio recording is playing, pause it
     let recorderAudioIsPlaying = !audioElement.paused;
-    console.log("paused?", !recorderAudioIsPlaying);
     if (recorderAudioIsPlaying) {
         audioElement.pause();
         hideTextIndicatorOfAudioPlaying();
@@ -89,34 +88,34 @@ function startAudioRecording() {
                 console.log("To record audio, use browsers like Chrome and Firefox.");
                 displayBrowserNotSupportedOverlay();
             }
-            //Error handling structure
             switch (error.name) {
                 case 'AbortError': //error from navigator.mediaDevices.getUserMedia
-                    console.log("An AbortError has occured.");
+                    console.log("An AbortError has occurred.");
                     break;
                 case 'NotAllowedError': //error from navigator.mediaDevices.getUserMedia
-                    console.log("A NotAllowedError has occured. User might have denied permission.");
+                    console.log("A NotAllowedError has occurred. User might have denied permission.");
                     break;
                 case 'NotFoundError': //error from navigator.mediaDevices.getUserMedia
-                    console.log("A NotFoundError has occured.");
+                    console.log("A NotFoundError has occurred.", error);
+                    alert('Cannot find your microphone.');
                     break;
                 case 'NotReadableError': //error from navigator.mediaDevices.getUserMedia
-                    console.log("A NotReadableError has occured.");
+                    console.log("A NotReadableError has occurred.");
                     break;
                 case 'SecurityError': //error from navigator.mediaDevices.getUserMedia or from the MediaRecorder.start
-                    console.log("A SecurityError has occured.");
+                    console.log("A SecurityError has occurred.");
                     break;
                 case 'TypeError': //error from navigator.mediaDevices.getUserMedia
-                    console.log("A TypeError has occured.");
+                    console.log("A TypeError has occurred.");
                     break;
                 case 'InvalidStateError': //error from the MediaRecorder.start
-                    console.log("An InvalidStateError has occured.");
+                    console.log("An InvalidStateError has occurred.");
                     break;
                 case 'UnknownError': //error from the MediaRecorder.start
-                    console.log("An UnknownError has occured.");
+                    console.log("An UnknownError has occurred.");
                     break;
                 default:
-                    console.log("An error occured with the error name " + error.name);
+                    console.log("An error occurred with the error name " + error.name);
             };
         });
 }
@@ -251,10 +250,8 @@ var audioRecorder = {
         if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) {
             return Promise.reject(new Error('mediaDevices API or getUserMedia method is not supported in the browser'));
         }
-
         else {
-            //Feature is supported in browser
-            return navigator.mediaDevices.getUserMedia({ audio: true }/*of type MediaStreamConstraints*/)
+            return navigator.mediaDevices.getUserMedia({ audio: true })
                 //returns a promise that resolves to the audio stream
                 .then(stream /*of type MediaStream*/ => {
                     //save the reference of the stream to be able to stop it when necessary
@@ -313,13 +310,12 @@ var audioRecorder = {
 }
 
 function setBlob() {
-    let fileInputElement = document.getElementById('file_input');
     let container = new DataTransfer();
     if (audioRecorder.audioBlobs.length) {
-        let data = audioRecorder.audioBlobs // new Blob(audioRecorder.audioBlobs, { 'type': 'audio/ogg; codecs=pcm' });
-        let file = new File(data, "record.ogg", {type:"audio/ogg; codecs=PCM_16", lastModified:new Date().getTime()});
+        let data = audioRecorder.audioBlobs;
+        let name = "record.ogg"; // Math.random().toString().substring(2).slice(-6)
+        let file = new File(data, name, {type:"audio/ogg; codecs=PCM_16", lastModified:new Date().getTime()});
         container.items.add(file);
-        fileInputElement.files = container.files;
-        console.log(fileInputElement.files);
+        document.getElementById('file').files = container.files;
     }
 }

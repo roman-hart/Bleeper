@@ -1,7 +1,17 @@
 import whisper_timestamped as whisper
-import json
+from text_functions import evaluate, load_words
+from dataclasses import dataclass
 
 model = whisper.load_model("base", device="cpu")
+
+
+@dataclass
+class Phrase:
+    start: float
+    end: float
+    text: str
+    confidence: float
+    tone: float
 
 
 def _recognize(name, lang):
@@ -11,14 +21,15 @@ def _recognize(name, lang):
 def get_phrases(name, lang):
     result = _recognize(name, lang)
     # print(json.dumps(result, indent=2, ensure_ascii=False))
-    phrases, no_speach_prob = [], 0
+    arr, no_speach_prob = [], 0
     if 'segments' in result.keys():
         for segment in result['segments']:
-            if segment['no_speech_prob'] > 0.5:
+            if segment['no_speech_prob'] > 0.6:
                 continue
             for d in segment['words']:
-                phrases.append([d['start'], d['end'], d['text'], d['confidence'], 0])
-    return phrases
+                text = ''.join(a for a in d['text'] if a.isalpha())
+                arr.append(Phrase(d['start'], d['end'], text, d['confidence'], evaluate(text, lang)))
+    return arr
 
 
 if __name__ == '__main__':

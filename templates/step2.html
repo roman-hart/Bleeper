@@ -1,0 +1,27 @@
+<div class="w-100 mb-2">
+    <input type="hidden" name="nextstep" value="3" />
+    <input type="hidden" name="name" value={{name}} />
+
+    <label class="form-label p-1" id="">Sensitivity</label>
+    <input type="range" class="form-range w-100" id="range" min="0" max="1" value="0.5" step="0.05"
+           onchange="filterLevel()" oninput="filterLevel()">
+    <button type="button" class="btn w-100 mb-2" onclick="addWords();">Add words</button>
+    <div class="btn-group-toggle" data-toggle="buttons" id="words">
+
+    {%for ph in phrases%}
+        <button type="button" class="btn btn-light p-1"
+                value={{ph.tone}} onclick="toggleText('{{ph.start}}', '{{ph.end}}', '{{ph.text}}');">{{ph.text}}</button>
+    {%endfor%}
+
+    </div>
+    <script>filterLevel();</script>
+    <textarea class="w-100" name="timestamps_string" rows=3 id="text" required></textarea>
+    <button type="button" class="btn w-100 mt-1 mb-1"
+            onclick="clearText();">Clear</button>
+    <select class="form-select p-2 mb-1 w-100" name="effect" required>
+      <option value="">Select audio effect</option>
+      <option value="bleep" selected>Bleep</option>
+      <option value="silence">Silence</option>
+    </select>
+    <button type="submit" class="btn btn-primary w-100">Next</button>
+</div>

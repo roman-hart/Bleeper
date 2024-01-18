@@ -1,13 +1,25 @@
+import time
+from variables import *
 from pydub import AudioSegment
 from pathlib import Path
 import os
 
 
-def manage_capacity(capacity, max_file_size):
+def delete_old(keep=should_keep, should_delete=0):
+    now = time.time()
+    from_oldest = sorted(Path('uploads').iterdir(), key=os.path.getmtime)[:keep]
+    for f in from_oldest:
+        if should_delete:
+            os.remove(f)
+            should_delete -= 1
+        elif now - f.stat().st_mtime > max_time_storage:
+            os.remove(f)
+
+
+def manage_capacity():
     available = capacity - sum(f.stat().st_size for f in Path('uploads').glob('**/*') if f.is_file()) // 1000000
     if available < max_file_size:
-        path_to_oldest = sorted(Path('uploads').iterdir(), key=os.path.getmtime)[0]
-        os.remove(path_to_oldest)
+        delete_old(should_delete=should_keep+1)
 
 
 def edit(name, timestamps, silence=False, wider=0.15, during_len=None):

@@ -6,6 +6,9 @@ body {
   background: #63738a;
   font-family: 'Roboto', sans-serif;
   }
+  .fadeIn {
+  display: none;
+  }
   .form-control {
   height: 40px;
   box-shadow: none;
